@@ -1,0 +1,17 @@
+{% extends 'Base.html' %}
+
+
+{% from 'bootstrap4/utils.html' import render_messages %}
+{% from 'bootstrap4/form.html' import render_form  %}
+
+{% block title %}{% endblock %}
+
+
+
+
+
+{% block main %}
+
+{{ render_form(form,action='/register', method='post')}}
+
+{% endblock %}

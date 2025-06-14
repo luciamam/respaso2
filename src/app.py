@@ -1,4 +1,13 @@
 from flask import Flask ,render_template
+from  flask_bootstrap import Bootstrap4
+from forms.forms import RegisterFrom
+from dotenv import load_dotenv
+
+import os
+
+load_dotenv()
+
+
 
 
 
@@ -6,6 +15,8 @@ from flask import Flask ,render_template
 
 
 app=Flask(__name__)
+Bootstrap4(app)
+app.config['SECRET_KEY']=os.getenv("SECRET_KEY")
 
 
 
@@ -17,7 +28,8 @@ def home():
 
 @app.route('/register')
 def mostrar_register():
-    return "soy la ruta register"
+    form=RegisterFrom()
+    return render_template('Register.html',form=form)
 
 
 
