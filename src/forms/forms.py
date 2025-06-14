@@ -12,3 +12,9 @@ class RegisterFrom(FlaskForm):
 
 
 
+class LoginFrom(FlaskForm):
+
+    email=EmailField("introduce un correo electronico",validators=[DataRequired(),Length(min=20,max=30),Email()])
+    password=PasswordField("escribe una contraseña",validators=[DataRequired(),Length(min=4,max=12)])
+    
+    submit=SubmitField("Inicia Sesion")

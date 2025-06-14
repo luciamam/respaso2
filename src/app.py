@@ -1,6 +1,6 @@
-from flask import Flask ,render_template,request,redirect,url_for
+from flask import Flask ,render_template,request,redirect,url_for,flash
 from  flask_bootstrap import Bootstrap4
-from forms.forms import RegisterFrom
+from forms.forms import RegisterFrom,LoginFrom
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -47,15 +47,35 @@ def registrarse():
         "email":email,
         "password":generate_password_hash(password)
     }
-    documento_usuario=usuarios.insert_one(dict_usuario)
-    return redirect(url_for('perfil'))
-
-
+    if  not db.usuarios.find_one({"email":email}):
+    
+        documento_usuario=usuarios.insert_one(dict_usuario)
+        return redirect(url_for('perfil'))
+    else:
+        flash ("este usuario ya existe","info")
+        return redirect(url_for("mostrar_register"))
 
 @app.route('/login')
 def mostrar_login():
-    return "soy la ruta login"
+    form=LoginFrom()
+    return render_template('Login.html',form=form)
 
+@app.route('/login', methods=['POST'])
+def login():
+    datos=request.form
+    email_request=datos["email"]
+    usuario=db['usuarios'].find_one({"email":email_request})
+    if usuario:
+        if check_password_hash(usuario["password"],datos["password"]):
+            return redirect(url_for("perfil"))
+        else:
+            flash("contraseña incorrecta","warning")
+            return redirect(url_for('mostrar_login'))
+    else:
+        
+        flash("el usuario no existe","error")
+        
+        return redirect(url_for('mostrar_register'))
 
 
 @app.route('/perfil')
