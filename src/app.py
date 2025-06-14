@@ -4,6 +4,7 @@ from forms.forms import RegisterFrom,LoginFrom
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash,check_password_hash
+from flask_jwt_extended import JWTManager,get_jwt_identity,jwt_required
 
 import os
 
@@ -22,6 +23,7 @@ app.config['SECRET_KEY']=os.getenv("SECRET_KEY")
 client = MongoClient("mongodb://localhost:27017/")
 db=client["RepasoJunio2025"]
 usuarios=db["usuarios"]
+jwt=JWTManager(app)
 
 
 
@@ -79,6 +81,7 @@ def login():
 
 
 @app.route('/perfil')
+@jwt_required(locations=["cookies"])
 def perfil():
     return "bienvenido a tu perfil"
 
@@ -86,6 +89,11 @@ def perfil():
 @app.errorhandler(404)
 def not_faound(mensaje):
     return render_template ('NotFound.html'),404
+
+
+@jwt.unauthorized_loader
+def manejo(mensaje):
+    return redirect(url_for('login'))
 
 
 
